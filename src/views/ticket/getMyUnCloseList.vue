@@ -132,6 +132,7 @@
     data () {
       return {
         page: 1,
+        total: 0,
 
         clearable: true,
         defaultExpandLevel: 6,
@@ -179,6 +180,18 @@
         this.getListQuery()
         getMyUnCloseList(Object.assign({}, this.listQuery, { p : this.page - 1})).then(response => {
           const items = response.data.retArr
+          this.list = items.map(v => {
+            this.$set(v, 'editTicketType', false)
+            this.$set(v, 'editSevertiy', false)
+            this.$set(v, 'originalTicketType', v.ticketType)
+            this.$set(v, 'originalSevertiy', v.severtiy)
+            return v
+          })
+          this.total = response.data.totalCnt
+
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1.5 * 1)
         })
 
       },
