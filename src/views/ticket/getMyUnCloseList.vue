@@ -58,6 +58,25 @@
         <el-form-item label="提交人电话：">
           <el-input v-model="listQuery.submitMob" class="filter-item" clearable/>
         </el-form-item>
+        <el-form-item label="提交时间">
+          <el-date-picker
+            v-model="listQuery.startTime"
+            class="filter-item"
+            style="width:  200px"
+            type="datetime"
+            value-format="timestamp"
+            format="yyyy-MM-dd HH:mm:ss"
+            placeholder="开始时间"/>
+          至至
+          <el-date-picker
+            v-model="listQuery.endTime"
+            class="filter-item"
+            style="width:  200px"
+            type="datetime"
+            value-format="timestamp"
+            format="yyyy-MM-dd HH:mm:ss"
+            placeholder="结束时间"/>
+        </el-form-item>
         <el-form-item label="关注：">
           <el-select v-model="listQuery.starred" clearable class="filter-item">
             <el-option v-for=" (item,index) in starredOptions " :key="item" :label="item" :value="!index"/>
@@ -66,6 +85,28 @@
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       </el-form>
     </div>
+
+
+    <el-table
+      v-loading="listLoading"
+      v-bind:key="tableKey"
+      v-bind:data="list"
+      border
+      fit
+      hightligh-current-row
+      style="width: 100%;margin-top: 20px;">
+      <el-table-column align="center" label="序号" min-width="30px">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('ticket.ticketSn')" min-width="90px" align="center">
+        <template slot-scope="scope">
+          <span class="link-type">{{ scope.row.ticketSn }}}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+
   </div>
 </template>
 
@@ -104,6 +145,10 @@
         submitTypeOptions: getSubmitTypeOptions(),
         starredOptions: getStarredOptions(),
 
+        listLoading: true,
+        tableKey: 0,
+        list: null,
+
         listQuery: {
           ticketType: undefined,
           ticketSource: undefined,
@@ -114,6 +159,8 @@
           submitName: undefined,
           submitMob: undefined,
           starred: undefined,
+          startTime: undefined,
+          endTime: undefined,
         }
       }
     },
